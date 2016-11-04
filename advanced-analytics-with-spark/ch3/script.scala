@@ -94,6 +94,7 @@ val model = ALS.trainImplicit(trainData, 10, 5, 0.01, 1.0)
 // val auc = areaUnderCurve(cvData, bAllItemIDs, predictMostListened(sc, trainData))
 
 // Optimize hyperparameters
+// TODO : This job takes too much time so needs to be debugged.
 val evaluations = 
   for (rank <- Array(10, 50);
        lambda <- Array(1,0, 0.0001);
