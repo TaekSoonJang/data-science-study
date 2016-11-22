@@ -144,16 +144,13 @@
     </dependencies>
   </dependencyManagement>
 
-  <url>https://github.com/sryza/aas</url>
-
   <prerequisites>
     <maven>${maven.version.min}</maven>
   </prerequisites>
 
   <modules>
-    <!-- <module>common</module> -->
-    <!-- <module>ch06-lsa</module> -->
     <module>ch7</module>
+    <module>ch8</module>
   </modules>
 
   <properties>
