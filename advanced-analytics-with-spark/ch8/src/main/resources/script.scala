@@ -187,6 +187,28 @@ val boroughDurations: RDD[(Option[String], Duration)] =
     viter.map(p => boroughDuration(p(0), p(1)))
   }).cache()
 
+boroughDurations.values.map(_.getStandardHours).countByValue().toList.sorted.foreach(println)
+
+import org.apache.spark.util.StatCounter
+
+boroughDurations.filter {
+  case (b, d) => d.getMillis >= 0
+}.mapValues(d => {
+  val s = new StatCounter()
+  s.merge(d.getStandardSeconds)
+}).reduceByKey((a, b) => a.merge(b)).collect().foreach(println)
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

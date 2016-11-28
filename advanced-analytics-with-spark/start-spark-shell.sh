@@ -13,4 +13,4 @@ $SPARK_HOME/bin/spark-shell \
 --num-executors 1 \
 --executor-cores 6 \
 --verbose \
---jars /Users/taeksoonjang/SourceTreeRepos/data-science-study/advanced-analytics-with-spark/ch8/target/ch8-0.9.jar
+--jars /Users/taeksoonjang/SourceTreeRepos/data-science-study/advanced-analytics-with-spark/ch9/target/ch9-0.9.jar
