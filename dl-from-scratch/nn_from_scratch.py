@@ -34,30 +34,35 @@ def predict(net, x):
 
 net = create_neural_net(784, 100, 10)
 
-p = predict(net, x_train)
-sampling_idx = np.random.choice(p.shape[0], 10)
-p_batch = p[sampling_idx]
+sampling_idx = np.random.choice(x_train.shape[0], 10)
+x_batch = x_train[sampling_idx]
 t_batch = t_train[sampling_idx]
-f = lambda prediction: cross_entropy_error(prediction, t_batch)
+f = lambda net: cross_entropy_error(predict(net, x_batch), t_batch)
 
 def numerical_gradient(f, x):
     d = 1e-4
 
-    grad = np.zeros_like(x)
-    it = np.nditer(x, flags=['multi_index'], op_flags=['readwrite'])
-    while not it.finished:
-        i = it.multi_index
-        tmp = x[i]
-        x[i] = tmp + d
-        fx1 = f(x)
-        x[i] = tmp - d
-        fx2 = f(x)
-        x[i] = tmp
+    grad = {}
+    grad['b1'] = np.zeros_like(x['b1'])
+    grad['w1'] = np.zeros_like(x['w1'])
+    grad['b2'] = np.zeros_like(x['b2'])
+    grad['w2'] = np.zeros_like(x['w2'])
 
-        grad[i] = (fx1 - fx2) / (2 * d)
-        it.iternext()
+    for param in ['b1', 'b2', 'w1', 'w2']:
+        it = np.nditer(x[param], flags=['multi_index'], op_flags=['readwrite'])
+        while not it.finished:
+            i = it.multi_index
+            tmp = x[param][i]
+            x[param][i] = tmp + d
+            fx1 = f(x)
+            x[param][i] = tmp - d
+            fx2 = f(x)
+            x[param][i] = tmp
+
+            grad[param][i] = (fx1 - fx2) / (2 * d)
+            it.iternext()
 
     return grad
 
-grad = numerical_gradient(f, p_batch)
-print(grad.shape)
+grad = numerical_gradient(f, net)
+print(grad)
