@@ -22,23 +22,6 @@ def create_neural_net(input_dim, hidden_dim, output_dim, weight_init_std=0.01):
         'w2': w2
     }
 
-
-def predict(net, x):
-    a1 = np.dot(x, net['w1']) + net['b1']
-    z1 = sigmoid(a1)
-
-    a2 = np.dot(z1, net['w2']) + net['b2']
-    y = softmax(a2)
-
-    return y
-
-net = create_neural_net(784, 100, 10)
-
-sampling_idx = np.random.choice(x_train.shape[0], 10)
-x_batch = x_train[sampling_idx]
-t_batch = t_train[sampling_idx]
-f = lambda net: cross_entropy_error(predict(net, x_batch), t_batch)
-
 def numerical_gradient(f, x):
     d = 1e-4
 
@@ -48,7 +31,7 @@ def numerical_gradient(f, x):
     grad['b2'] = np.zeros_like(x['b2'])
     grad['w2'] = np.zeros_like(x['w2'])
 
-    for param in ['b1', 'b2', 'w1', 'w2']:
+    for param in ('b1', 'b2', 'w1', 'w2'):
         it = np.nditer(x[param], flags=['multi_index'], op_flags=['readwrite'])
         while not it.finished:
             i = it.multi_index
@@ -64,5 +47,34 @@ def numerical_gradient(f, x):
 
     return grad
 
-grad = numerical_gradient(f, net)
-print(grad)
+
+def predict(net, x):
+    a1 = np.dot(x, net['w1']) + net['b1']
+    z1 = sigmoid(a1)
+
+    a2 = np.dot(z1, net['w2']) + net['b2']
+    y = softmax(a2)
+
+    return y
+
+def accuracy(x, t):
+    return np.sum(x.argmax(axis=1) == t.argmax(axis=1)) / x.shape[0]
+
+
+net = create_neural_net(784, 50, 10)
+lr = 0.2
+for i in range(100):
+    sampling_idx = np.random.choice(x_train.shape[0], 100)
+    x_batch = x_train[sampling_idx]
+    t_batch = t_train[sampling_idx]
+    f = lambda net: cross_entropy_error(predict(net, x_batch), t_batch)
+
+    grad = numerical_gradient(f, net)
+    net['b1'] -= grad['b1'] * lr
+    net['b2'] -= grad['b2'] * lr
+    net['w1'] -= grad['w1'] * lr
+    net['w2'] -= grad['w2'] * lr
+
+    p = predict(net, x_train)
+    print(cross_entropy_error(p, t_train))
+
